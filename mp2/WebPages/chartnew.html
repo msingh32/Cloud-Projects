@@ -1,0 +1,75 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script type="text/javascript">
+window.onload = function () {
+var dataPoints = [];
+var dataPoints2 = [];
+$.getJSON("sns_queue.php", function(data) {
+        $.each(data, function(key, value){
+                console.log(value.Sum);
+                console.log(Date.parse(value.Timestamp));
+				
+                dataPoints.push({x:key, y: parseInt(value.Sum)});
+        });
+        var chart = new CanvasJS.Chart("chartContainer",{
+                title:{
+                        text:"Rendering Chart with dataPoints from External JSON"
+                },
+                data: [{
+                        type: "line",
+                        xValueType: "dateTime",
+                        dataPoints : dataPoints,
+                }],
+                options: {
+        scales: {
+            xAxes: [{
+                time: {
+                    unit: 'hour'
+                }
+            }]
+        }
+    }
+        });
+		        chart.render();
+});
+$.getJSON("sqs_queue.php", function(data) {
+        $.each(data, function(key, value){
+                console.log(value.Sum);
+                console.log(value.Timestamp);
+                dataPoints.push({x:key, y: parseInt(value.Sum)});
+        });
+        var chart2 = new CanvasJS.Chart("chartContainer2",{
+                title:{
+                        text:"Rendering Chart with dataPoints from External JSON"
+                },
+                data: [{
+                        type: "line",
+                        xValueType: "dateTime",
+                        dataPoints : dataPoints,
+                }],
+                options: {
+        scales: {
+            xAxes: [{
+                time: {
+                    unit: 'hour'
+                }
+            }]
+        }
+    }
+        });
+		        chart2.render();
+});
+}
+</script>
+
+</head>
+<body>
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+<div id="chartContainer2" style="height: 300px; width: 100%;"></div>
+</body>
+</html>
+

@@ -1,0 +1,82 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script type="text/javascript">
+window.onload = function () {
+var dataPoints = [];
+var dataPoints2 = [];
+var dataPoints3 = [];
+$.getJSON("sns_queue.php", function(data) {
+        $.each(data, function(key, value){
+                console.log(value.Sum);
+                console.log(Date.parse(value.Timestamp));
+				
+                dataPoints.push({x:key, y: parseInt(value.Sum)});
+        });
+        var chart = new CanvasJS.Chart("chartContainer",{
+                title:{
+                        text:"Number of Messages Send Metrics"
+                },
+                data: [{
+                        type: "line",
+                        
+                        dataPoints : dataPoints,
+                }],
+                
+        });
+		        chart.render();
+});
+$.getJSON("sqs_queue.php", function(data) {
+        $.each(data, function(key, value){
+                console.log(value.Sum);
+              
+                dataPoints2.push({x:key, y: parseInt(value.Sum)});
+        });
+        var chart2 = new CanvasJS.Chart("chartContainer2",{
+                title:{
+                        text:"Number of Messages Visible in Queue"
+                },
+                data: [{
+                        type: "line",
+                       
+                        dataPoints : dataPoints2,
+                }],
+                 
+        });
+		        chart2.render();
+});
+
+$.getJSON("cloudwatch_cpu.php", function(data) {
+        $.each(data, function(key, value){
+                console.log(value);
+                 
+                dataPoints3.push({x:key, y: parseInt(value.SampleCount)});
+        });
+        var chart3 = new CanvasJS.Chart("chartContainer3",{
+                title:{
+                        text:"CPU utilization Metrics graph"
+                },
+                data: [{
+                        type: "line",
+                       
+                        dataPoints : dataPoints3,
+                }],
+                 
+        });
+		        chart3.render();
+});
+
+}
+</script>
+
+</head>
+<body>
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+<div id="chartContainer2" style="height: 300px; width: 100%;"></div>
+<div id="chartContainer3" style="height: 300px; width: 100%;"></div>
+</body>
+</html>
+
